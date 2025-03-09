@@ -20,7 +20,7 @@ namespace Company.Mody.BLL.Repositories
             _context = context;
         }
 
-        public Department Get(int? id)
+        public Department Get(int id)
         {
             //return _context.Departments.FirstOrDefault(d => d.Id == id);
             return _context.Departments.Find(id);
