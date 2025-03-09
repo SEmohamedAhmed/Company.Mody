@@ -1,3 +1,5 @@
+using Company.Mody.BLL.Interfaces;
+using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,9 @@ namespace Company.Mody.PL
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
             });
 
+
+            //builder.Services.AddScoped<DepartmentRepository>(); // allows DI for DepartmentRepository
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // allows DI for DepartmentRepository
 
             var app = builder.Build();
 
