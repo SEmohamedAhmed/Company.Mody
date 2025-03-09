@@ -1,4 +1,5 @@
 using Company.Mody.DAL.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.Mody.PL
 {
@@ -13,7 +14,10 @@ namespace Company.Mody.PL
 
             //builder.Services.AddScoped<AppDbContext>(); // allow DI for appdbcontext
 
-            builder.Services.AddDbContext<AppDbContext>();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+            });
 
 
             var app = builder.Build();

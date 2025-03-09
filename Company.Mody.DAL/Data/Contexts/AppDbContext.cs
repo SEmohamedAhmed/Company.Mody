@@ -13,10 +13,18 @@ namespace Company.Mody.DAL.Data.Contexts
     {
         public DbSet<Department> Departments { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server = .; database = MVC_Mody_Company; trusted_connection=true; TrustServerCertificate = true;");
+            
         }
+
+
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Server = .; database = MVC_Mody_Company; trusted_connection=true; TrustServerCertificate = true;");
+        //}
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
