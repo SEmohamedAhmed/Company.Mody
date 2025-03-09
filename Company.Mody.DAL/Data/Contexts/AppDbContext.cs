@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.Mody.DAL.Data.Contexts
 {
-    internal class AppDbContext:DbContext
+    public class AppDbContext:DbContext
     {
-        DbSet<Department> Departments { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

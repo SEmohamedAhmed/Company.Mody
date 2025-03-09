@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Company.Mody.DAL\Company.Mody.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
