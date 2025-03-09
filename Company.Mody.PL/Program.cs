@@ -1,3 +1,5 @@
+using Company.Mody.DAL.Data.Contexts;
+
 namespace Company.Mody.PL
 {
     public class Program
@@ -8,6 +10,11 @@ namespace Company.Mody.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews(); // for MVC apps
+
+            //builder.Services.AddScoped<AppDbContext>(); // allow DI for appdbcontext
+
+            builder.Services.AddDbContext<AppDbContext>();
+
 
             var app = builder.Build();
 
