@@ -49,7 +49,7 @@ namespace Company.Mody.PL.Controllers
         // Get the update details view
         public IActionResult Update(int? id)
         {
-            if(id is null) return BadRequest();
+            if (id is null) return BadRequest();
 
             var dept = _departmentRepository.Get(id.Value);
             if (dept == null) return NotFound();
@@ -58,18 +58,38 @@ namespace Company.Mody.PL.Controllers
         }
 
         [HttpPost]
+        // Prevent any request from other clients other than the same application
+        // tested using postman post request!
+        [AutoValidateAntiforgeryToken]
         // Updates department
-        public IActionResult Update(Department department)
+        // we get the id from the segment/route as we dont gurantee the client as it can sends id,
+        // also we need an id if we use a dto 
+        // check priority of the request params binding
+
+        public IActionResult Update([FromRoute] int? id, Department department)
         {
-            if (ModelState.IsValid) // checks data annotations validation
+
+
+            try
             {
-                var count = _departmentRepository.Update(department);
-                if (count > 0)
+                if (id != department.Id) return BadRequest("Invalid Operation");
+
+                if (ModelState.IsValid) // checks data annotations validation
                 {
-                    return RedirectToAction(nameof(Index));
-                    // Try another time to redirect to details of current dept
+                    var count = _departmentRepository.Update(department);
+                    if (count > 0)
+                    {
+                        return RedirectToAction(nameof(Index));
+                        // Try another time to redirect to details of current dept
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+
+                ModelState.AddModelError(String.Empty, ex.Message);
+            }
+
             return View(department);
         }
 
@@ -87,10 +107,14 @@ namespace Company.Mody.PL.Controllers
         }
 
 
+        // Deletes department
         [HttpPost]
-        // Updates department
-        public IActionResult Delete(Department department)
+        [AutoValidateAntiforgeryToken]
+
+        public IActionResult Delete([FromRoute] int? id, Department department)
         {
+            if (id != department.Id) return BadRequest("Invalid Operation");
+
             // checks data annotations validation
             if (ModelState.IsValid)
             {
@@ -112,6 +136,6 @@ namespace Company.Mody.PL.Controllers
 
 
             return View(dept);
-        } 
+        }
     }
 }

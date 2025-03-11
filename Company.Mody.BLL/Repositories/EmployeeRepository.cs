@@ -10,15 +10,20 @@ using Company.Mody.DAL.Models;
 namespace Company.Mody.BLL.Repositories
 {
     // CLR
-    public class DepartmentRepository : GenericRepository<Department>,IDepartmentRepository
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
         private readonly AppDbContext _context; // Null
 
+
         // Ask CLR to create object from AppDbContext
-        public DepartmentRepository(AppDbContext context):base(context) 
+        public EmployeeRepository(AppDbContext context): base(context)
         {
 
         }
+
+        
+
+
 
 
     }

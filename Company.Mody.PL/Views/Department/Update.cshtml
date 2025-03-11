@@ -11,7 +11,11 @@
 <br />
 
 
-<form  method="post">
+<form method="post">
+
+    @*!!!In development Only!!!*@
+    @* <div asp-validation-summary="All" class="alert alert-danger"></div> *@
+
     <div class="form-group">
         <label asp-for="Code" class="col-form-label">Code</label>
         <input asp-for="Code" class="form-control" />

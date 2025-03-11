@@ -1,0 +1,70 @@
+﻿@using Company.Mody.DAL.Models
+
+@model IEnumerable<Employee>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>All Employees</h1>
+
+<br />
+<br />
+
+<a asp-controller="Employee" asp-action="Add" class="btn btn-primary">Create Employee</a>
+<br />
+<br />
+
+
+@if(Model.Count() > 0){
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(e => e.Name)</th>
+                <th>@Html.DisplayNameFor(e => e.Age)</th>
+                <th>@Html.DisplayNameFor(e => e.Address)</th>
+                <th>@Html.DisplayNameFor(e => e.Email)</th>
+                <th>@Html.DisplayNameFor(e => e.PhoneNumber)</th>
+                <th>@Html.DisplayNameFor(e => e.Salary)</th>
+                <th>@Html.DisplayNameFor(e => e.IsActive)</th>
+                <th>@Html.DisplayNameFor(e => e.HiringDate)</th>
+                <th>Deatils</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td>@e.Name</td>
+                    <td>@e.Age</td>
+                    <td>@e.Address</td>
+                    <td>@Html.DisplayFor(m => e.Email)</td>
+                    <td>@e.PhoneNumber</td>
+                    <td>@Html.DisplayFor(m => e.Salary)</td>
+                    <td>@Html.DisplayFor(m => e.IsActive)</td>
+                    <td>@e.HiringDate</td>
+
+
+                    <td>
+                        <a asp-controller="Employee"  asp-action="Details" asp-route-id="@e.Id" class="btn btn-warning">Details</a>
+                    </td>
+                    <td>
+                        <a asp-action="Update" asp-route-id="@e.Id" class="btn btn-success">Update</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger">Delete</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}else{
+    <div class="alert-danger">
+        <h2>There are no employees!</h2>
+    </div>
+}
