@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Company.Mody.DAL.Models
 {
-    public class Department
+    public class Department: BaseEntity
     {
 
         public int Id { get; set; }

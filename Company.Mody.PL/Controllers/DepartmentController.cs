@@ -49,7 +49,7 @@ namespace Company.Mody.PL.Controllers
         // Get the update details view
         public IActionResult Update(int? id)
         {
-            if(id is null) return BadRequest();
+            if (id is null) return BadRequest();
 
             var dept = _departmentRepository.Get(id.Value);
             if (dept == null) return NotFound();
@@ -66,7 +66,8 @@ namespace Company.Mody.PL.Controllers
         // also we need an id if we use a dto 
         // check priority of the request params binding
 
-        public IActionResult Update([FromRoute] int? id,Department department)
+        public IActionResult Update([FromRoute] int? id, Department department)
+
         {
 
 
@@ -89,7 +90,7 @@ namespace Company.Mody.PL.Controllers
 
                 ModelState.AddModelError(String.Empty, ex.Message);
             }
-            
+
             return View(department);
         }
 
@@ -136,6 +137,6 @@ namespace Company.Mody.PL.Controllers
 
 
             return View(dept);
-        } 
+        }
     }
 }
