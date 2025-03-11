@@ -67,6 +67,7 @@ namespace Company.Mody.PL.Controllers
         // check priority of the request params binding
 
         public IActionResult Update([FromRoute] int? id, Department department)
+
         {
 
 
