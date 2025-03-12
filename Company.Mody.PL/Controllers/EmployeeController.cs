@@ -29,6 +29,7 @@ namespace Company.Mody.PL.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         // Add employee to the database
         public IActionResult Add(Employee employee)
         {
@@ -58,6 +59,7 @@ namespace Company.Mody.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         // Updates employee
         public IActionResult Update([FromRoute]int? id, Employee employee)
         {
@@ -92,7 +94,9 @@ namespace Company.Mody.PL.Controllers
 
 
         [HttpPost]
-        // Updates employee
+        [ValidateAntiForgeryToken]
+
+        // Delete employee
         public IActionResult Delete([FromRoute] int? id, Employee employee)
         {
             if (id is null) return BadRequest();
@@ -115,11 +119,11 @@ namespace Company.Mody.PL.Controllers
         {
             if (id is null) return BadRequest(); // 400 status code
 
-            var dept = _employeeRepository.Get(id.Value);
-            if (dept == null) return NotFound();
+            var employee = _employeeRepository.Get(id.Value);
+            if (employee == null) return NotFound();
 
 
-            return View(dept);
-        } 
+            return View(employee);
+        }
     }
 }
