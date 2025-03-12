@@ -39,16 +39,8 @@
                     <td>@dept.DateOfCreation</td>
 
 
-                    <td>
-                        <a asp-controller="Department" asp-action="Details" asp-route-id="@dept.Id" class="btn btn-warning">Details</a>
-                    </td>
-                    <td>
-                        <a asp-action="Update" asp-route-id="@dept.Id" class="btn btn-success">Update</a>
-                    </td>
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@dept.Id" class="btn btn-danger">Delete</a>
-                    </td>
-
+                    <partial name="_IndexPartial" model="@dept.Id" />
+                    
                 </tr>
             }
         </tbody>
@@ -61,3 +53,4 @@ else
         <h2>There are no departments!</h2>
     </div>
 
+}

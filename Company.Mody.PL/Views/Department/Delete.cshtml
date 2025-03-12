@@ -10,19 +10,8 @@
 <br />
 
 <form  method="post">
-    <div class="form-group">
-        <label asp-for="Code" class="col-form-label">Code</label>
-        <input asp-for="Code" class="form-control" readonly />
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="col-form-label">Name</label>
-        <input asp-for="Name" class="form-control" type="text" readonly />
-    </div>
-    <div class="form-group">
-        <label asp-for="DateOfCreation" class="col-form-label">Date Of Creation</label>
-        <input asp-for="DateOfCreation" class="form-control" readonly />
+    <partial name="\PartialViews\_DetailsDeletePartial.cshtml" model="Model"/>
 
-    </div>
     <br />
     <input asp-action="Delete" type="submit" value="Delete" class="btn btn-danger" />
     <a asp-action="Index" class="btn btn-light">Back to departments list</a>

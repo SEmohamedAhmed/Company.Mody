@@ -48,16 +48,9 @@
                     <td>@e.HiringDate</td>
 
 
-                    <td>
-                        <a asp-controller="Employee"  asp-action="Details" asp-route-id="@e.Id" class="btn btn-warning">Details</a>
-                    </td>
-                    <td>
-                        <a asp-action="Update" asp-route-id="@e.Id" class="btn btn-success">Update</a>
-                    </td>
-                    <td>
-                        <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-danger">Delete</a>
-                    </td>
+                    <partial name="_IndexPartial" model="@e.Id" />
 
+                     
                 </tr>
             }
         </tbody>
