@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Company.Mody.BLL.Interfaces;
 using Company.Mody.DAL.Data.Contexts;
 using Company.Mody.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.Mody.BLL.Repositories
 {
@@ -18,13 +19,7 @@ namespace Company.Mody.BLL.Repositories
         // Ask CLR to create object from AppDbContext
         public EmployeeRepository(AppDbContext context): base(context)
         {
-
+            _context = context;
         }
-
-        
-
-
-
-
     }
 }
