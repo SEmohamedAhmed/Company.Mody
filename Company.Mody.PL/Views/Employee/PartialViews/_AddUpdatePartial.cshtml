@@ -1,4 +1,12 @@
-﻿@model Employee
+﻿@using Company.Mody.BLL.Interfaces
+@model Employee
+@inject IDepartmentRepository viewDepartmentRepository
+@{
+    // var departments = new SelectList( ViewData["Departments"] as IEnumerable<Department>, "Id","Name");
+    var departments = new SelectList( viewDepartmentRepository.GetAll(), "Id","Name");
+}
+
+
 
 <div class="form-group">
     <label asp-for="Name" class="col-form-label">Name</label>
@@ -50,3 +58,12 @@
     <span asp-validation-for="CreationDate" class="text-danger"></span>
 
 </div>
+
+<div class="form-group">
+    <label asp-for="DepartmentId" class="col-form-label">Department</label>
+    <select asp-for="DepartmentId" asp-items="departments" class="form-control">
+    <option value="@null">--Select Department--</option>
+    </select>
+
+</div>
+

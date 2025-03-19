@@ -11,46 +11,30 @@
 <br />
 <br />
 
+<form>
+    <div class="container m-4">
+        <div class="row">
+            <div class="col-6">
+                <input placeholder="Search Department By Name" type="text" id="Keyword" name="Keyword" class="form-control" value="@Context.Request.Query["Keyword"]" />
+            </div>
+            <div class="col-6">
+                <input type="submit" value="Search" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<br />
+<br />
+
 <a asp-controller="Department" asp-action="Add" class="btn btn-primary">Create Department</a>
 <br />
 <br />
 
 
-@if (Model.Count() > 0)
-{
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(d => d.Code)</th>
-                <th>@Html.DisplayNameFor(d => d.Name)</th>
-                <th>@Html.DisplayNameFor(d => d.DateOfCreation)</th>
-                <th>Deatils</th>
-                <th>Update</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
 
-        <tbody>
-            @foreach (var dept in Model)
-            {
-                <tr>
-                    <td>@dept.Code</td>
-                    <td>@dept.Name</td>
-                    <td>@dept.DateOfCreation</td>
-
-
-                    <partial name="_IndexPartial" model="@dept.Id" />
-                    
-                </tr>
-            }
-        </tbody>
-
-    </table>
-}
-else
-{
-    <div class="alert-danger">
-        <h2>There are no departments!</h2>
-    </div>
-
-}
+<!-- Container to update search results dynamically -->
+<div id="departmentResults">
+    <partial name="PartialViews/_DepartmentTable"></partial>
+</div>

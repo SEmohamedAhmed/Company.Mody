@@ -15,9 +15,17 @@ namespace Company.Mody.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string keyword)
         {
-            var departments = _departmentRepository.GetAll();
+            IEnumerable<Department> departments = string.IsNullOrEmpty(keyword)
+                                    ? _departmentRepository.GetAll()
+                                    : _departmentRepository.GetByName(keyword);
+
+            if (Request.Headers["X-Requested-DepartmentSearch"] == "XMLHttpRequest") // if Ajax Call
+            {
+                // Return the HTML fragment of the employee table for AJAX
+                return PartialView("PartialViews/_DepartmentTable", departments);
+            }
             return View(departments);
         }
 
@@ -49,12 +57,7 @@ namespace Company.Mody.PL.Controllers
         // Get the update details view
         public IActionResult Update(int? id)
         {
-            if (id is null) return BadRequest();
-
-            var dept = _departmentRepository.Get(id.Value);
-            if (dept == null) return NotFound();
-
-            return View(dept);
+            return Details(id, "Update");
         }
 
         [HttpPost]
@@ -98,13 +101,7 @@ namespace Company.Mody.PL.Controllers
         // get deatils to delete department
         public IActionResult Delete(int? id)
         {
-            if (id is null) return BadRequest();
-
-            var department = _departmentRepository.Get(id.Value);
-
-            if (department == null) return NotFound();
-
-            return View(department);
+            return Details(id, "Delete");
         }
 
 
@@ -128,7 +125,7 @@ namespace Company.Mody.PL.Controllers
             return View(department);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id, string viewName = "Details")
         {
             if (id is null) return BadRequest(); // 400 status code
 

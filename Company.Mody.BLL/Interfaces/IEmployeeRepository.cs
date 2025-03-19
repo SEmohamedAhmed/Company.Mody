@@ -17,6 +17,5 @@ namespace Company.Mody.BLL.Interfaces
         //int Delete(Employee entity);
 
 
-
     }
 }

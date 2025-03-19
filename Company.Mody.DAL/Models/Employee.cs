@@ -22,11 +22,13 @@ namespace Company.Mody.DAL.Models
         [DataType(DataType.EmailAddress)]
         [EmailAddress(ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
-        [Phone]
+        [RegularExpression(@"^(01[0125]\d{8})|024\d{7}$", ErrorMessage = "Invalid Egyptian phone number format.")]
         public string PhoneNumber { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime HiringDate { get; set; }
         public DateTime CreationDate { get; set; }
+        public int? DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
 }

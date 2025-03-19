@@ -21,5 +21,6 @@ namespace Company.Mody.DAL.Models
         [Required(ErrorMessage = "!!! Date Of Creation Is Required from backend!!!")]
         [DisplayName("Date Of Creation")]
         public DateTime? DateOfCreation { get; set; }
+        public List<Employee>? Employees { get; set; }
     }
 }

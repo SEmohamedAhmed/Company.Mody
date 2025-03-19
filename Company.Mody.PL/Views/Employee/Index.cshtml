@@ -8,56 +8,33 @@
 
 <h1>All Employees</h1>
 
-<br />
-<br />
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="m-3 alert alert-info">
+        <p>@TempData["Message"]</p>
+    </div>
+}
 
+<form>
+    <div class="container m-4">
+        <div class="row">
+            <div class="col-6">
+                <input placeholder="Search Employee By Name" type="text" id="Keyword" name="Keyword" class="form-control" value="@Context.Request.Query["Keyword"]" />
+            </div>
+            <div class="col-6">
+                <input type="submit" value="Search" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
 <a asp-controller="Employee" asp-action="Add" class="btn btn-primary">Create Employee</a>
 <br />
 <br />
 
+<!-- Container to update search results dynamically -->
+<div id="employeeResults">
+    <partial name="PartialViews/_EmployeeTable"></partial>
+</div>
 
-@if(Model.Count() > 0){
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(e => e.Name)</th>
-                <th>@Html.DisplayNameFor(e => e.Age)</th>
-                <th>@Html.DisplayNameFor(e => e.Address)</th>
-                <th>@Html.DisplayNameFor(e => e.Email)</th>
-                <th>@Html.DisplayNameFor(e => e.PhoneNumber)</th>
-                <th>@Html.DisplayNameFor(e => e.Salary)</th>
-                <th>@Html.DisplayNameFor(e => e.IsActive)</th>
-                <th>@Html.DisplayNameFor(e => e.HiringDate)</th>
-                <th>Deatils</th>
-                <th>Update</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var e in Model)
-            {
-                <tr>
-                    <td>@e.Name</td>
-                    <td>@e.Age</td>
-                    <td>@e.Address</td>
-                    <td>@Html.DisplayFor(m => e.Email)</td>
-                    <td>@e.PhoneNumber</td>
-                    <td>@Html.DisplayFor(m => e.Salary)</td>
-                    <td>@Html.DisplayFor(m => e.IsActive)</td>
-                    <td>@e.HiringDate</td>
-
-
-                    <partial name="_IndexPartial" model="@e.Id" />
-
-                     
-                </tr>
-            }
-        </tbody>
-
-    </table>
-}else{
-    <div class="alert-danger">
-        <h2>There are no employees!</h2>
-    </div>
-}

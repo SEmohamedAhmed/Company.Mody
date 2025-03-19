@@ -1,6 +1,8 @@
 using Company.Mody.BLL.Interfaces;
 using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Data.Contexts;
+using Company.Mody.PL.Mapping;
+using Company.Mody.PL.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.Mody.PL
@@ -25,8 +27,43 @@ namespace Company.Mody.PL
             //builder.Services.AddScoped<DepartmentRepository>(); // allows DI for DepartmentRepository
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // allows DI for DepartmentRepository
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // allows DI for DepartmentRepository
+            builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+
+
+
+            #region Services Life Time
+
+
+            // best practice : 
+            // Repository/Database          => Scoped
+            // Cach/Security                => Singleton
+
+
+            //builder.Services.AddScoped();       // create object of life time one per request
+            //builder.Services.AddTransient();    // create object of life time one per operation (mutiple ops in one request will create multiple objects)
+            //builder.Services.AddSingleton();    // create object of life time one per application
+
+
+            // allows dependency injection for our services
+
+            builder.Services.AddScoped<IScopedService,ScopedService>();         // per request
+            builder.Services.AddTransient<ITransientService,TransientService>();   // per operation
+            builder.Services.AddSingleton<ISingletonService,SingletonService>();   // per application
+
+
+
+
+            #endregion
+
+
+
+
 
             var app = builder.Build();
+
+
+
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -35,6 +72,7 @@ namespace Company.Mody.PL
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
