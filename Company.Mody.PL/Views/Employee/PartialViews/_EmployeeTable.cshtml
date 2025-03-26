@@ -11,6 +11,7 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
+                <th>@Html.DisplayNameFor(e => e.ImageName)</th>
                 <th>@Html.DisplayNameFor(e => e.Name)</th>
                 <th>@Html.DisplayNameFor(e => e.Age)</th>
                 <th>@Html.DisplayNameFor(e => e.Address)</th>
@@ -30,6 +31,7 @@
             @foreach (var e in Model)
             {
                 <tr>
+                    <td><img src="~/assets/images/@e.ImageName" width="50" class="rounded-circle"/></td>
                     <td>@e.Name</td>
                     <td>@e.Age</td>
                     <td>@e.Address</td>

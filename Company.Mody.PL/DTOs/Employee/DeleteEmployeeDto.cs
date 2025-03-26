@@ -6,5 +6,6 @@ namespace Company.Mody.PL.DTOs.Employee
     public class DeleteEmployeeDto
     {
         public int Id { get; set; }
+        public string ImageName { get; set; }
     }
 }

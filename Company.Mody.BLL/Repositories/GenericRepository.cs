@@ -20,50 +20,48 @@ namespace Company.Mody.BLL.Repositories
             _context = context;
         }
 
-        public T? Get(int id)
+        public async Task<T?> GetAsync(int id)
         {
             //return _context.Set<T>().FirstOrDefault(d => d.Id == id);
 
             if (typeof(T) == typeof(Employee))
-                return _context.Employees.Include(e=>e.Department).FirstOrDefault(x => x.Id == id) as T;
+                return await _context.Employees.Include(e=>e.Department).FirstOrDefaultAsync(x => x.Id == id) as T;
 
 
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             if(typeof(T) == typeof(Employee))
-                return (IEnumerable < T >) _context.Set<Employee>().Include(e=>e.Department).ToList();
+                return (IEnumerable<T>) await _context.Set<Employee>().Include(e=>e.Department).ToListAsync();
 
-            return _context.Set<T>().ToList();
+            return await _context.Set<T>().ToListAsync();
         }
-        public int Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
-            return _context.SaveChanges();
+            await _context.Set<T>().AddAsync(entity);
         }
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            return _context.SaveChanges();
         }
 
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            return _context.SaveChanges();
         }
 
-        public List<T> GetByName(string name)
+        public async Task<List<T>> GetByNameAsync(string name)
         {
             if(typeof (T) == typeof(Employee))
-                return _context.Employees.Include(e => e.Department).Where(e => e.Name.ToLower().Contains(name.ToLower())).ToList() as List<T>;
+                return await _context.Employees.Include(e => e.Department).Where(e => e.Name.ToLower().Contains(name.ToLower())).ToListAsync() as List<T>;
             else if(typeof (T) == typeof(Department))
-                return _context.Departments.Where(e => e.Name.ToLower().Contains(name.ToLower())).ToList() as List<T>;
+                return await _context.Departments.Where(e => e.Name.ToLower().Contains(name.ToLower())).ToListAsync() as List<T>;
 
             throw new NotImplementedException();
         }
+
 
     }
 }

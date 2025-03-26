@@ -15,7 +15,7 @@
     <div class="container m-4">
         <div class="row">
             <div class="col-6">
-                <input placeholder="Search Department By Name" type="text" id="Keyword" name="Keyword" class="form-control" value="@Context.Request.Query["Keyword"]" />
+                <input placeholder="Search Department By Name" type="text" id="Keyword" name="Keyword" data-search-type="Department" class="form-control" value="@Context.Request.Query["Keyword"]" />
             </div>
             <div class="col-6">
                 <input type="submit" value="Search" class="btn btn-success" />

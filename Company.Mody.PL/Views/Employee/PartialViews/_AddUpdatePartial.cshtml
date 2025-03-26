@@ -1,9 +1,9 @@
 ﻿@using Company.Mody.BLL.Interfaces
-@model Employee
+@model EmployeeDto
 @inject IDepartmentRepository viewDepartmentRepository
 @{
     // var departments = new SelectList( ViewData["Departments"] as IEnumerable<Department>, "Id","Name");
-    var departments = new SelectList( viewDepartmentRepository.GetAll(), "Id","Name");
+    var departments = new SelectList( await viewDepartmentRepository.GetAllAsync(), "Id","Name");
 }
 
 
@@ -67,3 +67,10 @@
 
 </div>
 
+
+<div class="form-group">
+    <label asp-for="Image" class="col-form-label">Upload Image</label>
+    <input asp-for="Image" class="form-control" />
+    <span asp-validation-for="Image" class="text-danger"  ></span>
+
+</div>

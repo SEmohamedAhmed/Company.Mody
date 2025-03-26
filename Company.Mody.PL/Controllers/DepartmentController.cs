@@ -7,19 +7,21 @@ namespace Company.Mody.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        //private readonly IDepartmentRepository _departmentRepository;
+
+        public DepartmentController(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public IActionResult Index(string keyword)
+        public async Task<IActionResult> Index(string keyword)
         {
             IEnumerable<Department> departments = string.IsNullOrEmpty(keyword)
-                                    ? _departmentRepository.GetAll()
-                                    : _departmentRepository.GetByName(keyword);
+                                    ?await _unitOfWork.DepartmentRepository.GetAllAsync()
+                                    : await _unitOfWork.DepartmentRepository.GetByNameAsync(keyword);
 
             if (Request.Headers["X-Requested-DepartmentSearch"] == "XMLHttpRequest") // if Ajax Call
             {
@@ -38,11 +40,12 @@ namespace Company.Mody.PL.Controllers
         }
         [HttpPost]
         // Add department to the database
-        public IActionResult Add(Department department)
+        public async Task<IActionResult> Add(Department department)
         {
             if (ModelState.IsValid) // checks data annotations validation
             {
-                var count = _departmentRepository.Add(department);
+                await _unitOfWork.DepartmentRepository.AddAsync(department);
+                var count = _unitOfWork.Commit();
                 if (count > 0)
                 {
                     //return RedirectToAction("Index");
@@ -55,9 +58,9 @@ namespace Company.Mody.PL.Controllers
 
         [HttpGet]
         // Get the update details view
-        public IActionResult Update(int? id)
+        public async Task<IActionResult> Update(int? id)
         {
-            return Details(id, "Update");
+            return await Details(id, "Update");
         }
 
         [HttpPost]
@@ -80,7 +83,9 @@ namespace Company.Mody.PL.Controllers
 
                 if (ModelState.IsValid) // checks data annotations validation
                 {
-                    var count = _departmentRepository.Update(department);
+                    _unitOfWork.DepartmentRepository.Update(department);
+                    var count = _unitOfWork.Commit();
+
                     if (count > 0)
                     {
                         return RedirectToAction(nameof(Index));
@@ -99,7 +104,7 @@ namespace Company.Mody.PL.Controllers
 
         [HttpGet]
         // get deatils to delete department
-        public IActionResult Delete(int? id)
+        public Task<IActionResult> Delete(int? id)
         {
             return Details(id, "Delete");
         }
@@ -116,7 +121,9 @@ namespace Company.Mody.PL.Controllers
             // checks data annotations validation
             if (ModelState.IsValid)
             {
-                var count = _departmentRepository.Delete(department);
+                _unitOfWork.DepartmentRepository.Delete(department);
+                var count = _unitOfWork.Commit();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -125,11 +132,11 @@ namespace Company.Mody.PL.Controllers
             return View(department);
         }
 
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (id is null) return BadRequest(); // 400 status code
 
-            var dept = _departmentRepository.Get(id.Value);
+            var dept = await _unitOfWork.DepartmentRepository.GetAsync(id.Value);
             if (dept == null) return NotFound();
 
 

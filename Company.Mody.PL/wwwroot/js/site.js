@@ -5,16 +5,32 @@
 
 
 document.addEventListener("DOMContentLoaded", function () {
+    //let searchInput = document.getElementById("Keyword");
+
+    //// Detect the page type based on the URL path
+    //let pageType = window.location.pathname.includes("Employee") ? "Employee" : "Department";
+    //console.log(pageType);
+    //// Select the correct results div
+    //let resultsDiv = document.getElementById(pageType === "Employee" ? "employeeResults" : "departmentResults");
+
+    //if (!searchInput || !resultsDiv) {
+    //    console.error("Search input or results container not found!");
+    //    return;
+    //}
+
     let searchInput = document.getElementById("Keyword");
 
-    // Detect the page type based on the URL path
-    let pageType = window.location.pathname.includes("Employee") ? "Employee" : "Department";
-    console.log(pageType);
-    // Select the correct results div
-    let resultsDiv = document.getElementById(pageType === "Employee" ? "employeeResults" : "departmentResults");
+    // Get the search type from the data attribute
+    if (!searchInput) {
+        console.error("Search input not found!");
+        return;
+    }
 
-    if (!searchInput || !resultsDiv) {
-        console.error("Search input or results container not found!");
+    let searchType = searchInput.getAttribute("data-search-type"); // Get dynamic search type
+    let resultsDiv = document.getElementById(searchType.toLowerCase() + "Results"); // Find the right div
+
+    if (!resultsDiv) {
+        console.error(`Results container for ${searchType} not found!`);
         return;
     }
 
@@ -26,17 +42,17 @@ document.addEventListener("DOMContentLoaded", function () {
         //}
 
         let xhr = new XMLHttpRequest();
-        let url = `/${pageType}?keyword=${encodeURIComponent(keyword)}`;
+        let url = `/${searchType}?keyword=${encodeURIComponent(keyword)}`;
 
         xhr.open("GET", url, true);
-        xhr.setRequestHeader(`X-Requested-${pageType}Search`, "XMLHttpRequest");
+        xhr.setRequestHeader(`X-Requested-${searchType}Search`, "XMLHttpRequest");
 
         xhr.onreadystatechange = function () {
             if (this.readyState === 4) {
                 if (this.status === 200) {
                     resultsDiv.innerHTML = this.responseText;
                 } else {
-                    console.error(`Error: ${this.status} while fetching ${pageType} data`);
+                    console.error(`Error: ${this.status} while fetching ${searchType} data`);
                 }
             }
         };

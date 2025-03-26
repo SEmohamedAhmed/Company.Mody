@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeDto
 @{
     ViewData["Title"] = "Update";
 }
@@ -11,12 +11,19 @@
 <br />
 
 
-<form  method="post">
-    
+<form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <!-- Show general validation errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
 
     <partial name="\PartialViews\_AddUpdatePartial.cshtml" @*model="Model"*@ />
 
     <br />
+
+    <input hidden asp-for="ImageName"/>
 
     <input asp-action="Update" type="submit" value="Update" class="btn btn-primary" />
     <a asp-action="Index" class="btn btn-light">Back to employees list</a>
