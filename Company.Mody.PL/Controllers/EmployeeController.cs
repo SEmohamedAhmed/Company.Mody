@@ -3,27 +3,31 @@ using Company.Mody.BLL.Interfaces;
 using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Models;
 using Company.Mody.PL.DTOs.Employee;
+using Company.Mody.PL.Helper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Mody.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IEmployeeRepository _employeeRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeRepository employeeRepository,
-            IDepartmentRepository departmentRepository,
-            IMapper mapper)
+        public EmployeeController(IUnitOfWork unitOfWork,
+            IMapper mapper) 
         {
-            _employeeRepository = employeeRepository;
-            _departmentRepository = departmentRepository;
+
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
+
+
         [HttpGet]
-        public IActionResult Index(string? keyword)
+        public async Task<IActionResult> Index(string? keyword)
         {
              
             
@@ -47,10 +51,10 @@ namespace Company.Mody.PL.Controllers
 
 
             IEnumerable<Employee> employees = string.IsNullOrEmpty(keyword)
-                                                ? _employeeRepository.GetAll()
-                                                : _employeeRepository.GetByName(keyword);
+                                                ? await _unitOfWork.EmployeeRepository.GetAllAsync()
+                                                : await _unitOfWork.EmployeeRepository.GetByNameAsync(keyword);
 
-            if (Request.Headers["X-Requested-EmployeeSearch"] == "XMLHttpRequest") // if Ajax Call
+            if (Request.Headers["X-Requested-EmployeeSearch"] == "XMLHttpRequest") // if EmployeeSearch Ajax Call
             {
                 // Return the HTML fragment of the employee table for AJAX
                 return PartialView("PartialViews/_EmployeeTable", employees);
@@ -59,23 +63,42 @@ namespace Company.Mody.PL.Controllers
             return View(employees);
         }
 
+
+
+
         //[HttpPost] ----> Error 405 , method not allowed from browser!
         // Get Create Employee view
         [HttpGet]
-        public IActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            var departments = _departmentRepository.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["Departments"] = departments;
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         // Add employee to the database
-        public IActionResult Add(Employee employee)
+        public async Task<IActionResult> Add(EmployeeDto model)
         {
             if (ModelState.IsValid) // checks data annotations validation
             {
-                var count = _employeeRepository.Add(employee);
+
+                // incase of uploading invalid image file
+                if (model.Image is not null && !FileManuplation.IsImage(model.Image))
+                {
+                    ModelState.AddModelError("", "Please Upload a Valid Image!");
+                    return View(model);
+                }
+
+                if (model.Image is not null)
+                {
+                    model.ImageName = FileManuplation.Upload(model.Image, "images");
+                }
+
+                Employee employee = _mapper.Map<Employee>(model);
+                await _unitOfWork.EmployeeRepository.AddAsync(employee);
+                var count = _unitOfWork.Commit();
+
                 if (count > 0)
                 {
                     // Cannot use ViewBag as it only lasts for the current request, 
@@ -87,32 +110,72 @@ namespace Company.Mody.PL.Controllers
                     //return RedirectToAction("Index");
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                {
+                    // delete the image if uploaded and employee not created
+                    if(model.ImageName is not null) FileManuplation.Delete(model.ImageName,"images");
+                }
             }
-            return View(employee);
+            return View(model);
         }
+
+
 
 
         [HttpGet]
         // Get the update details view
-        public IActionResult Update(int? id)
+        public async Task<IActionResult> Update(int? id)
         {
-            var departments = _departmentRepository.GetAll();
+            if (id is null) return BadRequest(); // 400 status code
+
+            var employee = _mapper.Map<EmployeeDto>(await _unitOfWork.EmployeeRepository.GetAsync(id.Value));
+            if (employee == null) return NotFound();
+
+
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["Departments"] = departments;
-            return Details(id, "Update");
+
+            return View(employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         // Updates employee
-        public IActionResult Update([FromRoute]int? id, Employee employee)
+        public IActionResult Update([FromRoute]int? id, EmployeeDto model)
         {
-            if (id is null) return BadRequest();
+            if (!id.HasValue) return BadRequest();
 
-            if(id != employee.Id) return BadRequest();
+            //if (id != model.Id) return BadRequest();
+
+            // incase of uploading invalid image file
+            if (model.Image is not null && !FileManuplation.IsImage(model.Image))
+            {
+                ModelState.AddModelError("", "Please Upload a Valid Image!");
+                return View(model);
+            }
+
+
+            // handles if has image or has no image yet
+            if(model.ImageName is not null && model.Image is not null)
+            {
+                FileManuplation.Delete(model.ImageName, "images");
+            }
+
+            if(model.Image is not null)
+            {
+                model.ImageName = FileManuplation.Upload(model.Image, "images");
+            }
+            
+
+
+            Employee employee = _mapper.Map<Employee>(model);
+            employee.Id = id.Value;
 
             if (ModelState.IsValid) // checks data annotations validation
             {
-                var count = _employeeRepository.Update(employee);
+                _unitOfWork.EmployeeRepository.Update(employee);
+                var count = _unitOfWork.Commit();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -122,11 +185,14 @@ namespace Company.Mody.PL.Controllers
             return View(employee);
         }
 
+
+
+
         [HttpGet]
         // get deatils to delete employee
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
 
 
@@ -134,13 +200,14 @@ namespace Company.Mody.PL.Controllers
         [ValidateAntiForgeryToken]
 
         // Delete employee
-        public IActionResult Delete([FromRoute] int? id, DeleteEmployeeDto employeeDto)
+        public IActionResult Delete([FromRoute] int? id, DeleteEmployeeDto model)
         {
             if (id is null) return BadRequest();
 
-            if (id != employeeDto.Id) return BadRequest();
+            if (id != model.Id) return BadRequest();
 
-            // Manual Mapping
+            #region Manual Mapping
+            // 
             //Employee employee = new Employee()
             //{
             //    Id = employeeDto.Id,
@@ -155,32 +222,42 @@ namespace Company.Mody.PL.Controllers
             //    IsDeleted = employeeDto.IsDeleted,
             //    PhoneNumber = employeeDto.PhoneNumber,
             //    Salary = employeeDto.Salary,
-            //};
+            //}; 
+            #endregion
 
-            // auto mapper
 
 
             if (ModelState.IsValid)
             {
-                var employee = _mapper.Map<Employee>(employeeDto);
-                var count = _employeeRepository.Delete(employee);
+                // auto mapper
+                var employee = _mapper.Map<Employee>(model);
+                _unitOfWork.EmployeeRepository.Delete(employee);
+                var count = _unitOfWork.Commit();
+
                 if (count > 0)
                 {
+                    if (model.ImageName is not null)
+                    {
+                        FileManuplation.Delete(model.ImageName, "Images");
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }
-            return View(employeeDto);
+            return View(model);
         }
 
-        public IActionResult Details(int? id, string viewName="Details")
+
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id, string viewName="Details")
         {
             if (id is null) return BadRequest(); // 400 status code
 
-            var employee = _employeeRepository.Get(id.Value);
+            var employee = await _unitOfWork.EmployeeRepository.GetAsync(id.Value);
             if (employee == null) return NotFound();
 
 
-            return View(viewName, employee);
+            return View(employee);
         }
     }
 }

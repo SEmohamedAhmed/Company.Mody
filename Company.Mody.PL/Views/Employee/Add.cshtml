@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeDto
 
 
 @{
@@ -11,7 +11,13 @@
 <br />
 
 
-<form  method="post">
+<form  method="post" enctype="multipart/form-data">
+    <!-- Show general validation errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
     <partial name="\PartialViews\_AddUpdatePartial.cshtml" @*model="Model"*@ />
 
     <br />

@@ -26,7 +26,8 @@ namespace Company.Mody.PL
 
             //builder.Services.AddScoped<DepartmentRepository>(); // allows DI for DepartmentRepository
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // allows DI for DepartmentRepository
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // allows DI for DepartmentRepository
+            //builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // allows DI for DepartmentRepository
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // allows DI for UnitOfWork
             builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 
 

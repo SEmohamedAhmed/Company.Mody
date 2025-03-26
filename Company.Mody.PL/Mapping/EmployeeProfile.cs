@@ -9,6 +9,7 @@ namespace Company.Mody.PL.Mapping
         public EmployeeProfile()
         {
             CreateMap<DeleteEmployeeDto,Employee>().ReverseMap();
+            CreateMap<EmployeeDto, Employee>().ReverseMap();
 
         }
     }
