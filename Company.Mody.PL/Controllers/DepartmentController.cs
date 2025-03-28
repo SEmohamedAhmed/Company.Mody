@@ -1,10 +1,12 @@
 ﻿using Company.Mody.BLL.Interfaces;
 using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Mody.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

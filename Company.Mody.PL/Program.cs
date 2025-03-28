@@ -1,8 +1,10 @@
 using Company.Mody.BLL.Interfaces;
 using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Data.Contexts;
+using Company.Mody.DAL.Models;
 using Company.Mody.PL.Mapping;
 using Company.Mody.PL.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.Mody.PL
@@ -30,6 +32,17 @@ namespace Company.Mody.PL
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // allows DI for UnitOfWork
             builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 
+            //builder.Services.AddScoped<UserManager<AppUser>>();
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+
+            builder.Services.ConfigureApplicationCookie(
+                options => options.LoginPath="/Account/Signin"
+
+                );
 
 
             #region Services Life Time
@@ -80,6 +93,8 @@ namespace Company.Mody.PL
 
             app.UseRouting();
 
+            // must be after routing
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

@@ -2,10 +2,13 @@ using System.Diagnostics;
 using System.Text;
 using Company.Mody.PL.Models;
 using Company.Mody.PL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Mody.PL.Controllers
 {
+    //[AllowAnonymous]
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
