@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+.hover-bold:hover {
+/*    font-weight: bold !important;*/
+    color: #007bff !important; /* Bootstrap primary color */
+}
+

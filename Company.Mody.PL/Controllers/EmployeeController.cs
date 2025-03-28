@@ -4,10 +4,12 @@ using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Models;
 using Company.Mody.PL.DTOs.Employee;
 using Company.Mody.PL.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Mody.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

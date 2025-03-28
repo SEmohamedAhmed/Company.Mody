@@ -2,7 +2,73 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@* <div class="text-center"> *@
+@*     <h1 class="display-4">Welcome</h1> *@
+@*     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
+@* </div> *@
+
+
+
+
+<div class="container">
+    <header class="hero-section text-center text-white py-5">
+        <h1>Welcome to My MVC Project!</h1>
+        <p>MVC, CRUD Operations, Security, Asynchronous Programming and more!</p>
+    </header>
+
+    <section id="about" class="my-5 text-center">
+        <h2>About</h2>
+        <p class="lead">
+            Through this project, I have gained hands-on experience with ASP.NET MVC, 
+            implementing key concepts such as CRUD operations using Entity Framework Core,
+            security modules, AutoMapper, and asynchronous programming. 
+            This application is my start point to build scalable, secure,
+            and efficient web applications while following best practices in modern web development.
+        </p>
+    </section>
+
+    <section id="features" class="my-5 text-center">
+        <h2>Features</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4>ASP.NET MVC Using .Net 8</h4>
+                    <p>Implement MVC 3-Tier Architecture effectively.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4>Entity Framework Core</h4>
+                    <p>Perform CRUD operations efficiently.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4>Security Module</h4>
+                    <p>Implement authentication and authorization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="my-5 text-center">
+        <h2>Contact</h2>
+        <p>Have questions? Reach out via email: <strong>contact@mvc-learning.com</strong></p>
+    </section>
 </div>
+
+
+
+<style>
+    .hero-section {
+        background: linear-gradient(to right, #007bff, #6610f2);
+        padding: 60px 20px;
+        border-radius: 10px;
+    }
+    .feature-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
