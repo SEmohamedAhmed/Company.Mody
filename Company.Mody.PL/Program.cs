@@ -1,11 +1,15 @@
+using System.Security.Claims;
 using Company.Mody.BLL.Interfaces;
 using Company.Mody.BLL.Repositories;
 using Company.Mody.DAL.Data.Contexts;
 using Company.Mody.DAL.Models;
 using Company.Mody.PL.Mapping;
 using Company.Mody.PL.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Company.Mody.PL
 {
@@ -40,9 +44,15 @@ namespace Company.Mody.PL
 
 
             builder.Services.ConfigureApplicationCookie(
-                options => options.LoginPath="/Account/Signin"
+                options => options.LoginPath = "/Account/Signin"
 
                 );
+
+
+
+
+
+
 
 
             #region Services Life Time
