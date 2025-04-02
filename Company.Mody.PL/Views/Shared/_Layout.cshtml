@@ -31,11 +31,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark fw-normal px-3 hover-bold" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-normal px-3 hover-bold" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-normal px-3 hover-bold" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark btn btn-danger" asp-area="" asp-controller="Account" asp-action="Signout">Sign Out</a>
+                            <a class="nav-link text-dark btn btn-outline-info" asp-area="" asp-controller="Home" asp-action="Profile">Profile</a>
                         </li>
+                        <li class="nav-item ">
+                            <a class="nav-link text-dark btn btn-outline-warning" asp-area="" asp-controller="Account" asp-action="Signout">Sign out</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>

@@ -1,0 +1,35 @@
+﻿@model RoleViewModel
+
+
+@{
+    ViewData["Title"] = "Add";
+}
+
+<h1>Create Role</h1>
+
+<br />
+<br />
+
+
+<form  method="post" enctype="multipart/form-data">
+    <!-- Show general validation errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+    <partial name="\PartialViews\_AddUpdatePartial.cshtml" @*model="Model"*@ />
+
+    <br />
+    <input asp-action="Add" type="submit" value="Create" class="btn btn-primary"/>
+    <a asp-action="Index" class="btn btn-light" >Back to roles list</a>
+
+</form>
+
+
+
+@section JQueryValidation{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+}

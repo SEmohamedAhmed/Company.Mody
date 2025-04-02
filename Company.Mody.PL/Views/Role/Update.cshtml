@@ -1,0 +1,43 @@
+﻿@model RoleViewModel
+@{
+    ViewData["Title"] = "Update";
+}
+
+<h1>Update role</h1>
+
+
+
+<br />
+<br /> 
+
+
+<form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <!-- Show general validation errors -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    }
+
+
+    <partial name="\PartialViews\_AddUpdatePartial.cshtml" @*model="Model"*@ />
+
+    <br />
+
+    <a asp-action="AddOrRemoveUser" asp-route-roleId=@Model.Id class="btn btn-success">Addr or remove user</a>
+
+
+    <br />
+    <br />
+    <br />
+
+    <input asp-action="Update" type="submit" value="Update" class="btn btn-primary" />
+    <a asp-action="Index" class="btn btn-light">Back to roles list</a>
+
+</form>
+
+@*Client Side Validation*@
+@section JQueryValidation {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+}

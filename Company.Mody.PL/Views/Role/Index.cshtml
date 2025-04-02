@@ -1,0 +1,41 @@
+﻿@model IEnumerable<RoleViewModel>
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>All Roles</h1>
+
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="m-3 alert alert-info">
+        <p>@TempData["Message"]</p>
+    </div>
+}
+
+<form>
+    <div class="container m-4">
+        <div class="row">
+            <div class="col-6">
+                <input placeholder="Search Role By Name" type="text" id="Keyword" name="Keyword" class="form-control" value="@Context.Request.Query["Keyword"]" data-search-type="Role" />
+            </div>
+            <div class="col-6">
+                <input type="submit" value="Search" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+<br />
+<a asp-controller="Role" asp-action="Add" class="btn btn-primary">Create Role</a>
+<br />
+<br />
+
+<!-- Container to update search results dynamically -->
+<div id="roleResults">
+    <partial name="PartialViews/_roleTable"></partial>
+</div>
+

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Company.Mody.DAL.Models;
 using Company.Mody.PL.DTOs.AppUser;
+using Company.Mody.PL.DTOs.User;
 
 namespace Company.Mody.PL.Mapping
 {
@@ -11,6 +12,7 @@ namespace Company.Mody.PL.Mapping
         {
             
             CreateMap<AppUser, SignupViewModel>().ReverseMap();
+            CreateMap<AppUser, UserViewModel>().ReverseMap();
 
         }
 

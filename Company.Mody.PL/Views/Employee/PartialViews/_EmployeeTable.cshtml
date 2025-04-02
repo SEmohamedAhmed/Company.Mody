@@ -42,7 +42,7 @@
                     <td>@e.HiringDate</td>
                     <td>@(e.Department?.Name ?? "No Department")</td>
 
-                    <partial name="_IndexPartial" model="@e.Id" />
+                    <partial name="_IndexPartial" model="@e.Id.ToString()" />
                 </tr>
             }
         </tbody>

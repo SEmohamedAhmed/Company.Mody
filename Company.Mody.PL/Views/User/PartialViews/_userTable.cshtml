@@ -1,0 +1,47 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@model IEnumerable<UserViewModel>
+
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(u => u.Id)</th>
+                <th>@Html.DisplayNameFor(u => u.FirstName)</th>
+                <th>@Html.DisplayNameFor(u => u.LastName)</th>
+                <th>@Html.DisplayNameFor(u => u.Email)</th>
+                <th>@Html.DisplayNameFor(u => u.Roles)</th>
+
+                <th>Details</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.FirstName</td>
+                    <td>@u.LastName</td>
+                    <td>@Html.DisplayFor(m => u.Email)</td>
+                    <td>@string.Join(", ", u.Roles)</td>
+
+                    <partial name="_IndexPartial" model="@u.Id" />
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">
+        <h2>There are no users!</h2>
+    </div>
+}

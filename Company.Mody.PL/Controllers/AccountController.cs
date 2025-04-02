@@ -4,6 +4,7 @@ using Company.Mody.PL.DTOs.AppUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Company.Mody.PL.Helper;
 
 namespace Company.Mody.PL.Controllers
 {
@@ -21,6 +22,7 @@ namespace Company.Mody.PL.Controllers
             _signInManager = signInManager;
             _mapper = mapper;
         }
+
 
 
         #region Sign Up
@@ -71,8 +73,9 @@ namespace Company.Mody.PL.Controllers
         #endregion
 
 
+        #region Sign In
 
-        #region SignIn
+
         [HttpGet]
         public IActionResult SignIn() => View();
 
@@ -96,6 +99,7 @@ namespace Company.Mody.PL.Controllers
                 }
 
                 ModelState.AddModelError("", "Invalid Login");
+                ViewData["ErrorMessage"] = "Invalid Login!";
             }
             return View(model);
         }
@@ -104,10 +108,111 @@ namespace Company.Mody.PL.Controllers
         #endregion
 
 
+        #region Sign Out
         public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(SignIn));
+        }
+        #endregion
+
+
+        #region Reset Password
+
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendUrlToResetPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    // send Email then redirect to sent email view
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var url = Url.Action("ResetPassword", "Account", new { Email = model.Email, Token = token }, Request.Scheme);
+
+                    Email email = new Email()
+                    {
+                        To = model.Email,
+                        Subject = "Reset Password for Company",
+                        Body = url
+                    };
+
+                    // Send the email
+
+                    EmailSettings.SendEmail(email);
+
+                    // Redirect to check Your inbox view
+
+                    return RedirectToAction(nameof(CheckInbox));
+
+                }
+                ModelState.AddModelError("", "Invalid Reset Password");
+            }
+
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult CheckInbox()
+        {
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            TempData["email"] = email;
+            TempData["token"] = token;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var email = TempData["email"] as string;
+                var token = TempData["token"] as string;
+
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user is not null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(SignIn));
+                    }
+                }
+
+                ModelState.AddModelError("", "Invalid Reset Passsword");
+
+
+            }
+
+            return View(model);
+        }
+
+
+        #endregion
+
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

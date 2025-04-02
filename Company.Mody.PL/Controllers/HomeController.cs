@@ -1,8 +1,11 @@
 using System.Diagnostics;
 using System.Text;
+using Company.Mody.DAL.Models;
+using Company.Mody.PL.DTOs.Profile;
 using Company.Mody.PL.Models;
 using Company.Mody.PL.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Mody.PL.Controllers
@@ -18,6 +21,7 @@ namespace Company.Mody.PL.Controllers
         private readonly ITransientService transientService02;
         private readonly ISingletonService singletonService01;
         private readonly ISingletonService singletonService02;
+        private readonly UserManager<AppUser> _userManager;
 
         public HomeController(ILogger<HomeController> logger,
                                 IScopedService scopedService01,
@@ -25,7 +29,8 @@ namespace Company.Mody.PL.Controllers
                                 ITransientService transientService01,
                                 ITransientService transientService02,
                                 ISingletonService singletonService01,
-                                ISingletonService singletonService02)
+                                ISingletonService singletonService02,
+                                UserManager<AppUser> userManager)
         {
             _logger = logger;
             this.scopedService01 = scopedService01;
@@ -34,6 +39,7 @@ namespace Company.Mody.PL.Controllers
             this.transientService02 = transientService02;
             this.singletonService01 = singletonService01;
             this.singletonService02 = singletonService02;
+            _userManager = userManager;
         }
 
         public string TestService()
@@ -46,6 +52,22 @@ namespace Company.Mody.PL.Controllers
             sb.Append($"singletonService01: {singletonService01.Guid}\n");
             sb.Append($"singletonService02: {singletonService02.Guid}");
             return sb.ToString();
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            ProfileUser profileUser = null;
+            if (user != null)
+            {
+                profileUser = new ProfileUser (){
+                    UserName= user.UserName,
+                    Email=user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
+            return View(profileUser);
         }
 
         public IActionResult Index()
