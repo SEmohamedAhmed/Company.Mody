@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Company.Mody.PL.Helper.TwilioSms;
+using Company.Mody.PL.Helper.MailKitHelper;
+using Company.Mody.PL.Helper.Bitly;
 
 namespace Company.Mody.PL
 {
@@ -34,6 +37,7 @@ namespace Company.Mody.PL
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>(); // allows DI for DepartmentRepository
             //builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); // allows DI for DepartmentRepository
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // allows DI for UnitOfWork
+            
             builder.Services.AddAutoMapper(typeof(EmployeeProfile));
 
             //builder.Services.AddScoped<UserManager<AppUser>>();
@@ -43,15 +47,37 @@ namespace Company.Mody.PL
                 .AddDefaultTokenProviders();
 
 
-            builder.Services.ConfigureApplicationCookie(
-                options => options.LoginPath = "/Account/Signin"
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Signin"; // Redirect to Signin on unauthorized access
+                //options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Default expiration time
+                //options.SlidingExpiration = false; // Prevents automatic extension
+                //options.Cookie.HttpOnly = true; // Security best practice
+                //options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensures secure transmission in HTTPS
+            });
 
-                );
 
 
 
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+            builder.Services.AddScoped<IMailService, MailService>();
 
 
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(nameof(TwilioSettings)));
+            builder.Services.AddScoped<ITwilioService, TwilioService>();
+
+
+            builder.Services.Configure<BitlySettings>(builder.Configuration.GetSection(nameof(BitlySettings)));
+            builder.Services.AddScoped<IBitlyService, BitlyService>();
+
+
+            // This prevents users who are deleted and has remeber me cookies from using the website
+            // Deletes .AspNetCore.Identity.Application from user cookies
+            builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.FromSeconds(5); // Check every 5 seconds
+                //options.ValidationInterval = TimeSpan.FromMinutes(1); // Check every 1 Minute
+            });
 
 
 

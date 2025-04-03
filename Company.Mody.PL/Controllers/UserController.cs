@@ -29,7 +29,7 @@ namespace Company.Mody.PL.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? keyword)
+        public IActionResult Index(string? keyword)
         {
 
             IEnumerable<UserViewModel> users = Enumerable.Empty<UserViewModel>();

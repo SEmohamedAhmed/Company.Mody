@@ -64,7 +64,8 @@ namespace Company.Mody.PL.Controllers
                     UserName= user.UserName,
                     Email=user.Email,
                     FirstName = user.FirstName,
-                    LastName = user.LastName
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber
                 };
             }
             return View(profileUser);
