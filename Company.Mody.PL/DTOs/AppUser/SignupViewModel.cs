@@ -17,6 +17,9 @@ namespace Company.Mody.PL.DTOs.AppUser
         [Required]
         public string LastName { get; set; }
 
+        [Required]
+        public string PhoneNumber { get; set; }
+
 
         [Required]
         [DataType(DataType.Password)]

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Company.Mody.PL.Helper;
+using Company.Mody.PL.Helper.TwilioSms;
+using Company.Mody.PL.Helper.MailKitHelper;
+using Company.Mody.PL.Helper.Bitly;
 
 namespace Company.Mody.PL.Controllers
 {
@@ -12,14 +15,23 @@ namespace Company.Mody.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMailService _mailService;
+        private readonly ITwilioService _twilioService;
+        private readonly IBitlyService _bitlyService;
         private readonly IMapper _mapper;
 
         public AccountController(UserManager<AppUser> userManager
             ,SignInManager<AppUser> signInManager,
+            IMailService mailService,
+            ITwilioService twilioService,
+            IBitlyService bitlyService,
             IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mailService = mailService;
+            _twilioService = twilioService;
+            _bitlyService = bitlyService;
             _mapper = mapper;
         }
 
@@ -87,14 +99,9 @@ namespace Company.Mody.PL.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user is not null)
                 {
-                    var result = await _userManager.CheckPasswordAsync(user, model.Password);
-
-                    if (result)
-                    {
-                        var IsSignedIn = await _signInManager.PasswordSignInAsync(user, model.Password, model.RemeberMe, false);
-                        if (IsSignedIn.Succeeded)
-                            return RedirectToAction("Index", "Home");
-                    }
+                    var IsSignedIn = await _signInManager.PasswordSignInAsync(user, model.Password, model.RemeberMe, false);
+                    if (IsSignedIn.Succeeded)
+                        return RedirectToAction("Index", "Home");
 
                 }
 
@@ -125,6 +132,65 @@ namespace Company.Mody.PL.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult ForgotPasswordSms()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendUrlToResetPasswordSms(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    // send Email then redirect to sent email view
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var url = Url.Action("ResetPassword", "Account", new { Email = model.Email, Token = token }, Request.Scheme);
+
+                    var shortUrl = await _bitlyService.ShortenUrl(url);
+
+                    if(shortUrl is not null)
+                    {
+                        var sms = new Sms()
+                        {
+                            //Body = $"Here is the page url to reset your password (Don't Share With anyone!): {url}",
+                            Body = $"To Reset password, use {shortUrl}",
+                            To = user.PhoneNumber
+                        };
+
+                        _twilioService.SendSms(sms);
+
+                        // Redirect to check Your Phone view
+
+                        return RedirectToAction(nameof(CheckPhone));
+                    }
+
+                    return RedirectToAction(nameof(SignIn));
+
+                }
+                ModelState.AddModelError("", "Invalid Reset Password");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CheckPhone()
+        {
+            return View();
+        }
+
+
+
+        [HttpGet]
+        public IActionResult CheckInbox()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> SendUrlToResetPassword(ForgotPasswordViewModel model)
@@ -148,7 +214,9 @@ namespace Company.Mody.PL.Controllers
 
                     // Send the email
 
-                    EmailSettings.SendEmail(email);
+                    //EmailSettings.SendEmail(email);
+                    _mailService.SendEmail(email);
+
 
                     // Redirect to check Your inbox view
 
@@ -161,12 +229,6 @@ namespace Company.Mody.PL.Controllers
             return View(model);
         }
 
-
-        [HttpGet]
-        public IActionResult CheckInbox()
-        {
-            return View();
-        }
 
 
         [HttpGet]
