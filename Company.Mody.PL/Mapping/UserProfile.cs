@@ -13,6 +13,7 @@ namespace Company.Mody.PL.Mapping
             
             CreateMap<AppUser, SignupViewModel>().ReverseMap();
             CreateMap<AppUser, UserViewModel>().ReverseMap();
+            CreateMap<AppUser, ExternalAuthUser>().ReverseMap();
 
         }
 
