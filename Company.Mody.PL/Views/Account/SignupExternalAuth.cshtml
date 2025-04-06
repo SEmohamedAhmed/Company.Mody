@@ -1,10 +1,11 @@
 ﻿@{
     Layout = "_AuthLayout";
-    ViewData["Title"] = "SignUp";
+    ViewData["Title"] = "SignupExternalAuth";
 
 }
-@model SignupViewModel
 
+
+@model ExternalAuthUser
 
 
 
@@ -12,18 +13,17 @@
 <div class="container">
     <div class="card">
         <div class="card_title">
-            <h1>Create Account</h1>
             <span>Already have an account? <a asp-action="Signin">Sign In</a></span>
+            <h1>Create Account Using @Model.Provider</h1>
         </div>
         <div class="form">
-            <form asp-action="Signup">
-                <input asp-for="UserName" placeholder="User Name" required/>
-                <input asp-for="FirstName" placeholder="First Name" required/>
-                <input asp-for="LastName" placeholder="Last Name" required/>
-                <input asp-for="PhoneNumber" placeholder="Phone Number" required/>
-                <input asp-for="Email"  placeholder="Email"  required/>
-                <input asp-for="Password" placeholder="Password"required/>
-                <input asp-for="ConfirmPassword" placeholder="Confirm Password" required/>
+            <form asp-action="SignupExternalAuthPost">
+                <input asp-for="Email" placeholder="Email" readonly /> <!-- disabled is not sent to the server! -->
+                <input asp-for="UserName" placeholder="User Name" required />
+                <input asp-for="FirstName" placeholder="First Name" required />
+                <input asp-for="LastName" placeholder="Last Name" required />
+                <input asp-for="PhoneNumber" placeholder="Phone Number" required />
+                <input asp-for="Provider" type="hidden"/>
                 <input id="submit" type="submit" value="Sign Up" />
             </form>
         </div>
@@ -52,5 +52,5 @@ else if (TempData["ErrorMessage"] != null)
             alert("@tmp ");
         };
     </script>
-    
+
 }

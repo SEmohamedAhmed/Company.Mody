@@ -107,6 +107,21 @@ namespace Company.Mody.PL
 
 
 
+            // Add Google authentication
+            builder.Services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                options.CallbackPath = "/signin-google"; // Default
+            })
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+            });
+
+
 
 
             var app = builder.Build();
@@ -132,6 +147,9 @@ namespace Company.Mody.PL
             // must be after routing
             app.UseAuthentication();
             app.UseAuthorization();
+
+
+
 
             app.MapControllerRoute(
                 name: "default",

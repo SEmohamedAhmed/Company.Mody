@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Get the search type from the data attribute
     if (!searchInput) {
-        console.error("Search input not found!");
+        console.log("Search input not found!");
         return;
     }
 
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let resultsDiv = document.getElementById(searchType.toLowerCase() + "Results"); // Find the right div
 
     if (!resultsDiv) {
-        console.error(`Results container for ${searchType} not found!`);
+        console.log(`Results container for ${searchType} not found!`);
         return;
     }
 

@@ -8,6 +8,8 @@ using Company.Mody.PL.Helper;
 using Company.Mody.PL.Helper.TwilioSms;
 using Company.Mody.PL.Helper.MailKitHelper;
 using Company.Mody.PL.Helper.Bitly;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
 namespace Company.Mody.PL.Controllers
 {
@@ -269,6 +271,123 @@ namespace Company.Mody.PL.Controllers
 
 
         #endregion
+
+
+
+        #region External Login (Google & Facebook)
+
+
+
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            returnUrl ??= Url.Content("~/");
+
+            if (remoteError != null)
+            {
+                ViewData["ErrorMessage"] = $"Error from external provider: {remoteError}";
+                return RedirectToAction(nameof(SignIn));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(SignIn));
+            }
+
+            // Try to sign in with this external login
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            if (signInResult.Succeeded)
+            {
+                return LocalRedirect(returnUrl);
+            }
+
+            // If user doesn't exist, try to create a new one
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (email != null)
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+
+                // user is null => new user => make him sign up with the new view of external auth (no password)
+                if (user == null)
+                {
+                    var externalUser = new ExternalAuthUser { 
+                        Email = email,
+                        FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName),
+                        LastName = info.Principal.FindFirstValue(ClaimTypes.Surname),
+                        Provider = info.LoginProvider
+                    };
+                    return  RedirectToAction("SignupExternalAuth", externalUser);
+                }
+                // external user auth found before
+                else
+                {
+                    var addLoginResult = await _userManager.AddLoginAsync(user, info);
+                    if (!addLoginResult.Succeeded)
+                    {
+                        return RedirectToAction(nameof(SignIn));
+                    }
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
+                }
+                
+            }
+
+            return RedirectToAction(nameof(SignIn));
+        }
+
+
+        [HttpGet]
+        public IActionResult SignupExternalAuth(ExternalAuthUser model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignupExternalAuthPost(ExternalAuthUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(model.UserName);
+
+                if (user is null)
+                {
+                    user = _mapper.Map<AppUser>(model);
+                    var result = await _userManager.CreateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(SignIn));
+                    }
+
+                    //foreach (var e in result.Errors) ModelState.AddModelError("", e.Description);
+                    TempData["ErrorMessage"] = result.Errors.FirstOrDefault()?.Description;
+                }
+                else
+                {
+                    model.UserName = "";
+                    TempData["ErrorMessage"] = "User Name Exists!";
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Invalid SignUp, Try Again!";
+            }
+            // if validation failed => back to SignupExternalAuth View with the errors
+            return RedirectToAction("SignupExternalAuth", model);
+        }
+
+
+        #endregion
+
 
 
         [HttpGet]
